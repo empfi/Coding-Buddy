@@ -85,7 +85,8 @@
             const codeInput = document.getElementById("codeInput").value;
             const cleanedCode = codeInput
                 .split('\n') // Teile den Code in Zeilen
-                .filter(line => line.trim() && !line.includes('//')) // Filtere leere Zeilen und Kommentare heraus
+                .map(line => line.split('//')[0].trim()) // Entferne alles nach dem "//" und trim die Zeile
+                .filter(line => line) // Filtere leere Zeilen heraus
                 .join('\n'); // Verbinde die verbleibenden Zeilen wieder
             
             document.getElementById("cleanedCode").textContent = cleanedCode; // Zeige den bereinigten Code an
