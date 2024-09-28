@@ -55,11 +55,11 @@
 </head>
 <body>
 
-    <h1>Comment remover</h1>
-    <p>Code here:</p>
-    <textarea id="codeInput" placeholder="// Here is an example code\nlet x = 10; // Initialize x\nconsole.log(x); // Output"></textarea>
+    <h1>Comment Remover</h1>
+    <p>Code hier:</p>
+    <textarea id="codeInput" placeholder="// Hier ist ein Beispielcode\nlet x = 10; // Initialisiere x\nconsole.log(x); // Ausgabe"></textarea>
     
-    <h2>Clean Code:</h2>
+    <h2>Bereinigter Code:</h2>
     <div>
         <button id="copyButton">Code Kopieren</button>
         <pre id="cleanedCode"></pre>
@@ -85,7 +85,7 @@
             const codeInput = document.getElementById("codeInput").value;
             const cleanedCode = codeInput
                 .split('\n') // Teile den Code in Zeilen
-                .filter(line => !line.trim().startsWith('//')) // Filtere Kommentare heraus
+                .filter(line => line.trim() && !line.includes('//')) // Filtere leere Zeilen und Kommentare heraus
                 .join('\n'); // Verbinde die verbleibenden Zeilen wieder
             
             document.getElementById("cleanedCode").textContent = cleanedCode; // Zeige den bereinigten Code an
