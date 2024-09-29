@@ -44,12 +44,19 @@
             display: none; /* Anfangs versteckt */
             margin-bottom: 10px;
         }
+        /* Das <pre>-Element sorgt dafür, dass Leerzeichen und Zeilenumbrüche beibehalten werden */
         pre {
             background-color: #34495e;
             padding: 10px;
             border-radius: 5px;
             overflow-x: auto;
-            white-space: pre-wrap;
+            white-space: pre; /* Verwende white-space: pre, um die Formatierung exakt beizubehalten */
+            word-wrap: normal; /* Kein Umbruch von langen Wörtern */
+            margin-top: 10px;
+            width: 100%;
+        }
+        .output-container {
+            margin-top: 20px; /* Etwas Platz oberhalb der Ausgabe */
         }
     </style>
 </head>
@@ -57,10 +64,10 @@
 
     <h1>Comment Remover</h1>
     <p>Code hier:</p>
-    <textarea id="codeInput" placeholder="// Hier ist ein Beispielcode\nlet x = 10; // Initialisiere x\nconsole.log(x); // Ausgabe"></textarea>
+    <textarea id="codeInput" placeholder="// Hier ist ein Beispielcode\n    let x = 10; // Initialisiere x\n    console.log(x); // Ausgabe"></textarea>
     
-    <h2>Bereinigter Code:</h2>
-    <div>
+    <div class="output-container">
+        <h2>Bereinigter Code:</h2>
         <button id="copyButton">Code Kopieren</button>
         <pre id="cleanedCode"></pre>
     </div>
@@ -85,8 +92,8 @@
             const codeInput = document.getElementById("codeInput").value;
             const cleanedCode = codeInput
                 .split('\n') // Teile den Code in Zeilen
-                .map(line => line.split('//')[0].trim()) // Entferne alles nach dem "//" und trim die Zeile
-                .filter(line => line) // Filtere leere Zeilen heraus
+                .map(line => line.split('//')[0]) // Entferne alles nach dem "//", aber trimme die Zeile nicht, um die Einrückung zu behalten
+                .filter(line => line.trim()) // Filtere komplett leere Zeilen heraus
                 .join('\n'); // Verbinde die verbleibenden Zeilen wieder
             
             document.getElementById("cleanedCode").textContent = cleanedCode; // Zeige den bereinigten Code an
