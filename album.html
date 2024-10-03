@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Coding Buddy - Album</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+        }
+
+        h1, h2 {
+            color: #ecf0f1;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            background-color: #34495e;
+            color: #ecf0f1;
+            border: 1px solid #2980b9;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 14px;
+            resize: none;
+        }
+
+        button {
+            background-color: #2980b9;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin-top: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background-color: #3498db;
+        }
+
+        .upload-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Zentriert den Inhalt horizontal */
+    margin: 20px auto;
+        }
+
+
+        .file-input {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .file-input input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-input button {
+            background-color: #2980b9;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+
+        #uploadButton {
+            display: none;
+            background-color: #2980b9;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        #fileList {
+            display: none;
+            margin-top: 20px;
+            background-color: #34495e;
+            border-radius: 8px;
+            padding: 10px;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin: 20px;
+        }
+
+        .gallery-item {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s, opacity 0.3s ease-in-out;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .gallery-item.show {
+            opacity: 1;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .delete-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 5px;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .delete-icon img {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        .gallery-item:hover .delete-icon {
+            opacity: 1;
+        }
+
+        #imageModal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+
+        #modalImg {
+            max-width: 90%;
+            max-height: 90%;
+            margin: auto;
+            display: block;
+        }
+
+        header {
+            width: 100%;
+            height: 200px;
+            background: url('https://d2rjvl4n5h2b61.cloudfront.net/media/images/Coding.2e16d0ba.fill-1280x350-c100.jpg') no-repeat center center;
+            background-size: cover;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+            margin-bottom: 30px;
+        }          
+
+        /* Button Styles */
+        .home-button {
+            position: fixed; /* Fixiert den Button */
+            bottom: 20px; /* Abstand vom unteren Rand */
+            right: 20px; /* Abstand vom rechten Rand */
+            background-color: #2980b9; /* Hintergrundfarbe */
+            color: white; /* Textfarbe */
+            border: none; /* Keine Umrandung */
+            padding: 10px 15px; /* Innenabstand */
+            border-radius: 5px; /* Abgerundete Ecken */
+            cursor: pointer; /* Zeiger bei Hover */
+            font-size: 14px; /* Schriftgröße */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Schatten für den Button */
+            z-index: 1000; /* Stellt sicher, dass der Button oben angezeigt wird */
+        }
+
+        .home-button:hover {
+         background-color: #3498db; /* Farbänderung bei Hover */
+        }
+
+
+        .info-text {
+            text-align: center;
+            margin: 20px;
+            font-size: 16px;
+            color: #ecf0f1;
+        }
+
+        .fade.in {
+            animation: fadeInPage 0.5s ease forwards;
+        }
+
+        @keyframes fadeInPage {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+
+<!-- Der Home-Button -->
+<button class="home-button" onclick="location.href='home.html'"><i class="fas fa-file"></i>Home</button>
+
+<body>
+    <header>
+        <h1>Coding Buddy</h1>
+    </header>     
+    <main class="fade">
+        <div class="info-text">
+            <p>Willkommen in deiner Galerie! Hier kannst du Bilder hochladen, die nur für dich sichtbar sind. Beachte, dass deine Bilder verschwinden können, wenn du deinen Browsercache leerst!</p>
+            <p>Klicke auf "Wähle Dateien", um Bilder auszuwählen, und drücke "Hochladen", um sie hinzuzufügen.</p>
+        </div>
+
+        <section class="upload-section">
+            <div class="upload-form">
+                <form id="uploadForm">
+                    <div class="file-input">
+                        <button>Wähle Dateien</button>
+                        <input type="file" id="fileInput" accept=".jpg, .jpeg, .png" multiple required />
+                    </div>
+                    <button id="uploadButton" type="submit">Hochladen</button>
+                </form>
+                <div id="fileList">
+                    <h3>Dateien:</h3>
+                    <ul id="fileNames"></ul>
+                </div>
+            </div>
+
+            <div class="gallery" id="gallery"></div>
+
+            <div id="imageModal" class="modal">
+                <img id="modalImg" src="" alt="Großes Bild">
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.getElementById('fileInput').addEventListener('change', function (event) {
+            const fileInput = event.target;
+            const files = fileInput.files;
+
+            const fileList = document.getElementById('fileList');
+            const fileNames = document.getElementById('fileNames');
+            fileNames.innerHTML = '';
+            fileList.style.display = 'block';
+
+            const uploadButton = document.getElementById('uploadButton');
+            if (files.length > 0) {
+                uploadButton.style.display = 'block';
+            } else {
+                uploadButton.style.display = 'none';
+            }
+
+            Array.from(files).forEach(file => {
+                if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) {
+                    const reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        const listItem = document.createElement('li');
+                        const fileName = file.name.length > 15 ? file.name.substring(0, 15) + '...' : file.name;
+                        listItem.textContent = fileName;
+
+                        const previewImg = document.createElement('img');
+                        previewImg.src = e.target.result;
+                        previewImg.style.width = '50px';
+                        previewImg.style.height = '50px';
+                        previewImg.style.marginRight = '10px';
+
+                        listItem.prepend(previewImg);
+                        fileNames.appendChild(listItem);
+                    };
+
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+
+        document.getElementById('uploadForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const fileInput = document.getElementById('fileInput');
+            const files = fileInput.files;
+
+            Array.from(files).forEach(file => {
+                if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) {
+                    const reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        const images = JSON.parse(localStorage.getItem('images') || '[]');
+                        images.push(e.target.result);
+                        localStorage.setItem('images', JSON.stringify(images));
+                        loadImages();
+                    };
+
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            fileInput.value = '';
+            document.getElementById('fileList').style.display = 'none';
+            document.getElementById('uploadButton').style.display = 'none';
+        });
+
+        function loadImages() {
+            const gallery = document.getElementById('gallery');
+            gallery.innerHTML = '';
+
+            const images = JSON.parse(localStorage.getItem('images') || '[]');
+            images.forEach((src, index) => {
+                const galleryItem = document.createElement('div');
+                galleryItem.classList.add('gallery-item');
+
+                const img = document.createElement('img');
+                img.src = src;
+
+                const deleteIcon = document.createElement('div');
+                deleteIcon.classList.add('delete-icon');
+                const deleteImg = document.createElement('img');
+                deleteImg.src = 'https://img.icons8.com/ios-filled/50/ffffff/delete.png';
+
+                deleteIcon.appendChild(deleteImg);
+                galleryItem.appendChild(img);
+                galleryItem.appendChild(deleteIcon);
+                gallery.appendChild(galleryItem);
+
+                galleryItem.classList.add('show');
+
+                img.addEventListener('click', () => {
+                    const modal = document.getElementById('imageModal');
+                    const modalImg = document.getElementById('modalImg');
+                    modal.style.display = 'flex';
+                    modalImg.src = src;
+                });
+
+                deleteIcon.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    images.splice(index, 1);
+                    localStorage.setItem('images', JSON.stringify(images));
+                    loadImages();
+                });
+            });
+        }
+
+        document.getElementById('imageModal').addEventListener('click', function () {
+            this.style.display = 'none';
+        });
+
+        window.addEventListener('load', () => {
+            loadImages();
+        });
+    </script>
+</body>
+
+</html>
